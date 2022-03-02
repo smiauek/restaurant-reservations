@@ -6,9 +6,10 @@ function list(date) {
   }
 
 function create(newReservation) {
-    return knex("reservations").insert(newReservation, "*");
+    return knex("reservations").insert(newReservation, "*").then(records => records[0]);
 }
 
 module.exports = {
     list,
+    create,
 }
