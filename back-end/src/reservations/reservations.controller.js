@@ -41,6 +41,20 @@ function dateIsValidDate(req, res, next) {
       message: "reservation_date must be a valid date",
     });
   }
+  if (reservation_date < asDateString(new Date())) {
+    return next({
+      status: 400,
+      message: "reservation_date can not be in the past, please pick a future date",
+    });
+  }
+  let tempDate = reservation_date.split("-")
+
+  if (new Date(tempDate[0], tempDate[1]-1, tempDate[2]).getDay() == 2) {
+    return next({
+      status: 400,
+      message: "We're closed on Tuesdays, please pick a different day",
+    });
+  }
   next();
 }
 
