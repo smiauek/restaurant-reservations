@@ -42,7 +42,8 @@ function ReservationForm({ formData, handleChange }) {
             <input
               id="mobile_number"
               name="mobile_number"
-              type="text"
+              type="tel"
+              pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
               className="form-control"
               placeholder="xxx-xxx-xxxx"
               required
