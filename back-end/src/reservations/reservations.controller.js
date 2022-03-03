@@ -44,12 +44,13 @@ function dateIsValidDate(req, res, next) {
   if (reservation_date < asDateString(new Date())) {
     return next({
       status: 400,
-      message: "reservation_date can not be in the past, please pick a future date",
+      message:
+        "reservation_date can not be in the past, please pick a future date",
     });
   }
-  let tempDate = reservation_date.split("-")
+  let tempDate = reservation_date.split("-");
 
-  if (new Date(tempDate[0], tempDate[1]-1, tempDate[2]).getDay() == 2) {
+  if (new Date(tempDate[0], tempDate[1] - 1, tempDate[2]).getDay() == 2) {
     return next({
       status: 400,
       message: "We're closed on Tuesdays, please pick a different day",
@@ -64,10 +65,27 @@ function timeIsValidTime(req, res, next) {
   } = req.body;
   const time_regex = /^([0-1]?[0-9]|2[0-4]):([0-5][0-9])(:[0-5][0-9])?$/;
   if (!time_regex.test(reservation_time)) {
-    // !reservation_time.match(time_regex)
     return next({
       status: 400,
       message: "reservation_time must be a valid time",
+    });
+  }
+  const open = "10:30";
+  const close = "21:30";
+  if (reservation_time < open || reservation_time > close) {
+    return next({
+      status: 400,
+      message: "reservation_time must be between 10:30 AM and 9:30 PM",
+    });
+  }
+  const currentTime = `${String(new Date().getHours())}:${String(
+    new Date().getMinutes()
+  )}`;
+
+  if (reservation_time <= currentTime) {
+    return next({
+      status: 400,
+      message: "reservation_time must be in the future",
     });
   }
   next();
