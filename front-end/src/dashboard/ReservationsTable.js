@@ -3,8 +3,8 @@ import React from "react";
 function ReservationsTable({ reservations }) {
   return (
     <>
-      <table class="table">
-        <thead class="thead-light">
+      <table className="table">
+        <thead className="thead-light">
           <tr>
             <th scope="col">Id</th>
             <th scope="col">Time</th>
@@ -15,8 +15,8 @@ function ReservationsTable({ reservations }) {
           </tr>
         </thead>
         <tbody>
-          {reservations.map((reservation) => (
-            <tr>
+          {reservations.map((reservation, index) => (
+            <tr key={index} >
               <th scope="row">{reservation.reservation_id}</th>
               <td>{reservation.reservation_time}</td>
               <td>{reservation.first_name}</td>

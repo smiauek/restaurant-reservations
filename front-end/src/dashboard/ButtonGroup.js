@@ -8,24 +8,24 @@ function ButtonGroup({ date }) {
 
   return (
     <>
-      <div class="btn-group" role="group" aria-label="Basic example">
+      <div className="btn-group" role="group" aria-label="Basic example">
         <button
           type="button"
-          class="btn btn-secondary"
+          className="btn btn-secondary"
           onClick={() => history.push(`/dashboard?date=${previous(date)}`)}
         >
           Previous
         </button>
         <button
           type="button"
-          class="btn btn-secondary"
+          className="btn btn-secondary"
           onClick={() => history.push("/dashboard")}
         >
           Today
         </button>
         <button
           type="button"
-          class="btn btn-secondary"
+          className="btn btn-secondary"
           onClick={() => history.push(`/dashboard?date=${next(date)}`)}
         >
           Next
