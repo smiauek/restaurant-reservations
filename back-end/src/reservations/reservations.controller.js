@@ -34,7 +34,7 @@ function dateIsValidDate(req, res, next) {
   const {
     data: { reservation_date },
   } = req.body;
-  const date_regex = /\d{4}-\d{2}-\d{2}/g; // /^(\d{1,2})(\/|-)(\d{1,2})(\/|-)(\d{4})$/
+  const date_regex = /\d{4}-\d{2}-\d{2}/g;
   if (!date_regex.test(reservation_date)) {
     return next({
       status: 400,
