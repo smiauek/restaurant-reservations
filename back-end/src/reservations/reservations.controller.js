@@ -81,7 +81,7 @@ function timeIsValidTime(req, res, next) {
   const currentTime = `${String(new Date().getHours()).padStart(
     2,
     "0"
-  )}:${String(new Date().getMinutes())}`;
+  )}:${String(new Date().getMinutes()).padStart(2, "0")}`;
 
   if (reservation_time <= currentTime) {
     return next({
