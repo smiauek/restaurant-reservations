@@ -1,6 +1,3 @@
-/**
- * List handler for reservation resources
- */
 const service = require("./reservations.service");
 const asyncErrorBoundary = require("../errors/asyncErrorBoundry");
 
@@ -98,6 +95,21 @@ function asDateString(date) {
     .padStart(2, "0")}-${date.getDate().toString(10).padStart(2, "0")}`;
 }
 
+async function reservationExists(req, res, next) {
+  const { reservation_id } = req.params;
+
+  const reservation = await service.read(reservation_id);
+  if (reservation) {
+    res.locals.reservation = reservation;
+    return next();
+  }
+  return next({ status: 404, message: `Reservation cannot be found.` });
+}
+
+function read(req, res) {
+  return res.json({ data: res.locals.reservation });
+}
+
 async function list(req, res) {
   let { date } = req.query;
 
@@ -137,6 +149,7 @@ async function create(req, res, next) {
 
 module.exports = {
   list: asyncErrorBoundary(list),
+  read: [asyncErrorBoundary(reservationExists), read],
   create: [
     bodyDataHas("first_name"),
     bodyDataHas("last_name"),
