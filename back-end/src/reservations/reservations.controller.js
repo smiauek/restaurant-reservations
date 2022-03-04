@@ -71,8 +71,8 @@ function timeIsValidTime(req, res, next) {
     });
   }
   const open = "10:30";
-  const close = "21:30";
-  if (reservation_time < open || reservation_time > close) {
+  const hourToClose = "21:30";
+  if (reservation_time < open || reservation_time > hourToClose) {
     return next({
       status: 400,
       message: "reservation_time must be between 10:30 AM and 9:30 PM",
