@@ -83,8 +83,6 @@ function timeIsValidTime(req, res, next) {
     "0"
   )}:${String(new Date().getMinutes())}`;
 
-  console.log(`${reservation_time} <= ${currentTime}`);
-
   if (reservation_time <= currentTime) {
     return next({
       status: 400,
