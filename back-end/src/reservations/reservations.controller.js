@@ -34,7 +34,7 @@ function dateIsValidDate(req, res, next) {
   const {
     data: { reservation_date },
   } = req.body;
-  const date_regex = /\d{4}-\d{2}-\d{2}/g;
+  const date_regex = /\d{4}-\d{2}-\d{2}/g; // /^(\d{1,2})(\/|-)(\d{1,2})(\/|-)(\d{4})$/
   if (!date_regex.test(reservation_date)) {
     return next({
       status: 400,
@@ -78,9 +78,12 @@ function timeIsValidTime(req, res, next) {
       message: "reservation_time must be between 10:30 AM and 9:30 PM",
     });
   }
-  const currentTime = `${String(new Date().getHours())}:${String(
-    new Date().getMinutes()
-  )}`;
+  const currentTime = `${String(new Date().getHours()).padStart(
+    2,
+    "0"
+  )}:${String(new Date().getMinutes())}`;
+
+  console.log(`${reservation_time} <= ${currentTime}`);
 
   if (reservation_time <= currentTime) {
     return next({
