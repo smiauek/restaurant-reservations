@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { listTables } from "../utils/api";
+import { useParams, useHistory } from "react-router-dom";
+import { listTables, updateTable } from "../utils/api";
 import ErrorAlert from "../layout/ErrorAlert";
 import SeatReservationForm from "./SeatReservationForm";
 
 function SeatReservation() {
   let { reservation_id } = useParams();
+
+  const history = useHistory();
 
   const initialFormState = {
     table_id: "",
@@ -34,15 +36,38 @@ function SeatReservation() {
     });
   };
 
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    const abortController = new AbortController();
+    async function seatReservationAtTable() {
+      try {
+        await updateTable({ data: formData }, abortController.signal);
+        history.push(`/dashboard`);
+      } catch (error) {
+        setTablesError(error);
+      }
+    }
+    seatReservationAtTable();
+    return () => abortController.abort();
+  };
+
   return (
     <>
-      <h1>Seat Reservation</h1>
+      <h1>Seat Reservation {reservation_id}</h1>
       <ErrorAlert error={tablesError} />
       <SeatReservationForm
         tables={tables}
         formData={formData}
         handleChange={handleChange}
       />
+      <button
+        form="seatReservationForm"
+        type="submit"
+        className="btn btn-primary"
+        onClick={handleSubmit}
+      >
+        Submit
+      </button>
     </>
   );
 }

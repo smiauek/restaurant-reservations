@@ -12,7 +12,7 @@ function SeatReservationForm({ tables, formData, handleChange }) {
             <select
               id="table_id"
               name="table_id"
-              className="custom-select"
+              className="custom-select mb-3"
               onChange={handleChange}
               value={formData.table_id}
             >
