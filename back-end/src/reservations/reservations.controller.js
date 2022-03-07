@@ -1,6 +1,3 @@
-/**
- * List handler for reservation resources
- */
 const service = require("./reservations.service");
 const asyncErrorBoundary = require("../errors/asyncErrorBoundry");
 
@@ -61,7 +58,7 @@ function dateIsValidDate(req, res, next) {
 
 function timeIsValidTime(req, res, next) {
   const {
-    data: { reservation_time },
+    data: { reservation_time, reservation_date },
   } = req.body;
   const time_regex = /^([0-1]?[0-9]|2[0-4]):([0-5][0-9])(:[0-5][0-9])?$/;
   if (!time_regex.test(reservation_time)) {
@@ -71,18 +68,22 @@ function timeIsValidTime(req, res, next) {
     });
   }
   const open = "10:30";
-  const close = "21:30";
-  if (reservation_time < open || reservation_time > close) {
+  const hourToClose = "21:30";
+  if (reservation_time < open || reservation_time > hourToClose) {
     return next({
       status: 400,
       message: "reservation_time must be between 10:30 AM and 9:30 PM",
     });
   }
-  const currentTime = `${String(new Date().getHours())}:${String(
-    new Date().getMinutes()
-  )}`;
+  const currentTime = `${String(new Date().getHours()).padStart(
+    2,
+    "0"
+  )}:${String(new Date().getMinutes()).padStart(2, "0")}`;
 
-  if (reservation_time <= currentTime) {
+  if (
+    reservation_time <= currentTime &&
+    reservation_date === asDateString(new Date())
+  ) {
     return next({
       status: 400,
       message: "reservation_time must be in the future",
@@ -95,6 +96,24 @@ function asDateString(date) {
   return `${date.getFullYear().toString(10)}-${(date.getMonth() + 1)
     .toString(10)
     .padStart(2, "0")}-${date.getDate().toString(10).padStart(2, "0")}`;
+}
+
+async function reservationExists(req, res, next) {
+  const { reservation_id } = req.params;
+
+  const reservation = await service.read(reservation_id);
+  if (reservation) {
+    res.locals.reservation = reservation;
+    return next();
+  }
+  return next({
+    status: 404,
+    message: `Reservation ${reservation_id} cannot be found.`,
+  });
+}
+
+function read(req, res) {
+  return res.json({ data: res.locals.reservation });
 }
 
 async function list(req, res) {
@@ -136,6 +155,7 @@ async function create(req, res, next) {
 
 module.exports = {
   list: asyncErrorBoundary(list),
+  read: [asyncErrorBoundary(reservationExists), read],
   create: [
     bodyDataHas("first_name"),
     bodyDataHas("last_name"),
