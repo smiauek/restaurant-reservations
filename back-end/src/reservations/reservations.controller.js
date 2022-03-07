@@ -58,7 +58,7 @@ function dateIsValidDate(req, res, next) {
 
 function timeIsValidTime(req, res, next) {
   const {
-    data: { reservation_time },
+    data: { reservation_time, reservation_date },
   } = req.body;
   const time_regex = /^([0-1]?[0-9]|2[0-4]):([0-5][0-9])(:[0-5][0-9])?$/;
   if (!time_regex.test(reservation_time)) {
@@ -80,7 +80,10 @@ function timeIsValidTime(req, res, next) {
     "0"
   )}:${String(new Date().getMinutes()).padStart(2, "0")}`;
 
-  if (reservation_time <= currentTime) {
+  if (
+    reservation_time <= currentTime &&
+    reservation_date === asDateString(new Date())
+  ) {
     return next({
       status: 400,
       message: "reservation_time must be in the future",
@@ -103,7 +106,10 @@ async function reservationExists(req, res, next) {
     res.locals.reservation = reservation;
     return next();
   }
-  return next({ status: 404, message: `Reservation ${reservation_id} cannot be found.` });
+  return next({
+    status: 404,
+    message: `Reservation ${reservation_id} cannot be found.`,
+  });
 }
 
 function read(req, res) {
