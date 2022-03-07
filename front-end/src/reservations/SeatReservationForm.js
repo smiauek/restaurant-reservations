@@ -17,14 +17,13 @@ function SeatReservationForm({ tables, formData, handleChange }) {
               value={formData.table_id}
             >
               <option defaultValue>Open tables</option>
-              {tables.map((table, index) =>
-                table.reservation_id === null ? (
-                  <option key={index} value={table.table_id}>
-                    {table.table_name} - {table.capacity}
-                  </option>
-                ) : (
-                  <></>
-                )
+              {tables.map(
+                (table, index) =>
+                  table.reservation_id === null && (
+                    <option key={index} value={table.table_id}>
+                      {table.table_name} - {table.capacity}
+                    </option>
+                  )
               )}
             </select>
           </div>
