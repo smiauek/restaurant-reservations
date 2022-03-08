@@ -129,7 +129,7 @@ module.exports = {
     asyncErrorBoundary(checkReservation),
     asyncErrorBoundary(tableExists),
     checkIfOccupied,
-    checkCapacity, 
+    checkCapacity,
     asyncErrorBoundary(update),
   ],
 };
