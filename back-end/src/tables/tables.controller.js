@@ -103,11 +103,12 @@ async function list(req, res) {
 }
 
 async function create(req, res, next) {
-  const { data: { table_name, capacity } = {} } = req.body;
+  const { data: { table_name, capacity, reservation_id } = {} } = req.body;
 
   const newTable = {
     table_name,
     capacity,
+    reservation_id: reservation_id || null
   };
 
   const data = await service.create(newTable);
