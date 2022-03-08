@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { listReservations, listTables } from "../utils/api";
+import { listReservations, listTables, finishReservation } from "../utils/api";
 import ErrorAlert from "../layout/ErrorAlert";
 import ReservationsTable from "./ReservationsTable";
 import ButtonGroup from "./ButtonGroup";
@@ -30,6 +30,19 @@ function Dashboard({ date }) {
     return () => abortController.abort();
   }
 
+  const handleFinish = (table_id) => {
+    const abortController = new AbortController();
+    async function freeTable() {
+      try {
+        await finishReservation(table_id, abortController.signal);
+      } catch (error) {
+        setTablesError(error);
+      }
+    }
+    freeTable().then(loadDashboard);
+    return () => abortController.abort();
+  };
+
   return (
     <main>
       <h1>Dashboard</h1>
@@ -47,7 +60,7 @@ function Dashboard({ date }) {
           <div className="d-md-flex mb-3">
             <h4 className="mb-0">Tables</h4>
           </div>
-          <TablesTable tables={tables} />
+          <TablesTable tables={tables} handleFinish={handleFinish} />
         </div>
       </div>
     </main>

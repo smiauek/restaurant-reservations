@@ -1,6 +1,6 @@
 import React from "react";
 
-function ReservationsTable({ tables }) {
+function ReservationsTable({ tables, handleFinish }) {
   return (
     <>
       <table className="table">
@@ -10,6 +10,7 @@ function ReservationsTable({ tables }) {
             <th scope="col">Name</th>
             <th scope="col">Capacity</th>
             <th scope="col">Status</th>
+            <th scope="col">Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -18,7 +19,25 @@ function ReservationsTable({ tables }) {
               <th scope="row">{table.table_id}</th>
               <td>{table.table_name}</td>
               <td>{table.capacity}</td>
-              <td>{table.reservation_id === null ? "Free" : "Occupied"}</td>
+              <td data-table-id-status={table.table_id}>
+                {table.reservation_id === null ? "Free" : "Occupied"}
+              </td>
+              <td>
+                {table.reservation_id !== null && (
+                  <button
+                    type="button"
+                    className="btn btn-warning"
+                    data-table-id-finish={table.table_id}
+                    onClick={() => {
+                      window.confirm(
+                        "Is this table ready to seat new guests? This cannot be undone."
+                      ) && handleFinish(table.table_id);
+                    }}
+                  >
+                    Finish
+                  </button>
+                )}
+              </td>
             </tr>
           ))}
         </tbody>
