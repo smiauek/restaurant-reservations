@@ -80,14 +80,13 @@ function timeIsValidTime(req, res, next) {
     "0"
   )}:${String(new Date().getMinutes()).padStart(2, "0")}`;
 
-  if (
-    reservation_time <= currentTime &&
-    reservation_date === asDateString(new Date())
-  ) {
-    return next({
-      status: 400,
-      message: "reservation_time must be in the future",
-    });
+  if (reservation_date === asDateString(new Date())) {
+    if (reservation_time <= currentTime) {
+      return next({
+        status: 400,
+        message: "reservation_time must be in the future",
+      });
+    }
   }
   next();
 }
