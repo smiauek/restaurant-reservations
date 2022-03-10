@@ -12,6 +12,7 @@ function ReservationsTable({ reservations }) {
             <th scope="col">Last</th>
             <th scope="col">People</th>
             <th scope="col">Mobile</th>
+            <th scope="col">Status</th>
             <th scope="col">Actions</th>
           </tr>
         </thead>
@@ -25,14 +26,19 @@ function ReservationsTable({ reservations }) {
                 <td>{reservation.last_name}</td>
                 <td>{reservation.people}</td>
                 <td>{reservation.mobile_number}</td>
+                <td data-reservation-id-status={reservation.reservation_id}>
+                  {reservation.status}
+                </td>
                 <td>
-                  <a
-                    className="btn btn-success"
-                    href={`/reservations/${reservation.reservation_id}/seat`}
-                    role="button"
-                  >
-                    Seat
-                  </a>
+                  {reservation.status !== "seated" && (
+                    <a
+                      className="btn btn-success"
+                      href={`/reservations/${reservation.reservation_id}/seat`}
+                      role="button"
+                    >
+                      Seat
+                    </a>
+                  )}
                 </td>
               </tr>
             ))
