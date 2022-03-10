@@ -115,6 +115,45 @@ function read(req, res) {
   return res.json({ data: res.locals.reservation });
 }
 
+function checkIfStatusBooked(req, res, next) {
+  const {
+    data: { status },
+  } = req.body;
+  if (status !== "booked") {
+    return next({
+      status: 400,
+      message: 'new reservation can not have status "seated" or "finished"',
+    });
+  }
+  next();
+}
+
+function checkStatus(req, res, next) {
+  const newStatus = req.body.data.status;
+  const currentStatus = res.locals.reservation.status;
+
+  if (currentStatus === "finished") {
+    return next({
+      status: 400,
+      message: "a finished reservation can not be updated",
+    });
+  }
+
+  if (
+    newStatus === "booked" ||
+    newStatus === "seated" ||
+    newStatus === "finished"
+  ) {
+    return next();
+  }
+
+  return next({
+    status: 400,
+    message:
+      'unknown status, status can only be "booked", "seated" or "finished"',
+  });
+}
+
 async function list(req, res) {
   let { date } = req.query;
 
@@ -135,6 +174,7 @@ async function create(req, res, next) {
       reservation_date,
       reservation_time,
       people,
+      status,
     } = {},
   } = req.body;
 
@@ -145,11 +185,23 @@ async function create(req, res, next) {
     reservation_date,
     reservation_time,
     people,
+    status: status || "booked",
   };
 
   const data = await service.create(newReservation);
 
   res.status(201).json({ data });
+}
+
+async function changeStatus(req, res, next) {
+  const { status } = req.body.data;
+  const updatedReservation = {
+    ...res.locals.reservation,
+    status,
+  };
+
+  const data = await service.update(updatedReservation);
+  res.json({ data });
 }
 
 module.exports = {
@@ -162,9 +214,16 @@ module.exports = {
     bodyDataHas("reservation_date"),
     bodyDataHas("reservation_time"),
     bodyDataHas("people"),
+    checkIfStatusBooked,
     peopleIsValidNumber,
     timeIsValidTime,
     dateIsValidDate,
     asyncErrorBoundary(create),
+  ],
+  changeStatus: [
+    asyncErrorBoundary(reservationExists),
+    bodyDataHas("status"),
+    checkStatus,
+    asyncErrorBoundary(changeStatus),
   ],
 };
