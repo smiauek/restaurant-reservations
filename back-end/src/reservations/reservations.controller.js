@@ -84,7 +84,7 @@ function timeIsValidTime(req, res, next) {
     if (reservation_time <= currentTime) {
       return next({
         status: 400,
-        message: "reservation_time must be in the future",
+        message: `reservation_time must be in the future, it now is ${currentTime}`,
       });
     }
   }
