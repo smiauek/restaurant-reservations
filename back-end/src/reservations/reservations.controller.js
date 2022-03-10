@@ -119,12 +119,15 @@ function checkIfStatusBooked(req, res, next) {
   const {
     data: { status },
   } = req.body;
-  if (status !== "booked") {
-    return next({
-      status: 400,
-      message: 'new reservation can not have status "seated" or "finished"',
-    });
+  if (status) {
+    if (status !== "booked") {
+      return next({
+        status: 400,
+        message: 'new reservation can not have status "seated" or "finished"',
+      });
+    }
   }
+
   next();
 }
 
@@ -174,7 +177,6 @@ async function create(req, res, next) {
       reservation_date,
       reservation_time,
       people,
-      status,
     } = {},
   } = req.body;
 
@@ -185,7 +187,7 @@ async function create(req, res, next) {
     reservation_date,
     reservation_time,
     people,
-    status: status || "booked",
+    status: "booked",
   };
 
   const data = await service.create(newReservation);
@@ -214,10 +216,11 @@ module.exports = {
     bodyDataHas("reservation_date"),
     bodyDataHas("reservation_time"),
     bodyDataHas("people"),
-    checkIfStatusBooked,
+
     peopleIsValidNumber,
     timeIsValidTime,
     dateIsValidDate,
+    checkIfStatusBooked,
     asyncErrorBoundary(create),
   ],
   changeStatus: [

@@ -52,12 +52,27 @@ async function tableExists(req, res, next) {
   return next({ status: 404, message: `Table ${table_id} cannot be found.` });
 }
 
-async function checkReservation(req, res, next) {
+async function checkReservationFromBody(req, res, next) {
   const { reservation_id } = req.body.data;
 
   const reservation = await reservationsService.read(reservation_id);
 
   if (reservation) {
+    res.locals.reservation = reservation;
+    return next();
+  }
+  return next({
+    status: 404,
+    message: `Reservation ${reservation_id} cannot be found.`,
+  });
+}
+
+async function checkReservationFromTable(req, res, next) {
+  const { reservation_id } = res.locals.table;
+
+  const reservation = await reservationsService.read(reservation_id);
+
+  if (reservation !== null) {
     res.locals.reservation = reservation;
     return next();
   }
@@ -174,7 +189,7 @@ module.exports = {
   ],
   seatReservation: [
     bodyDataHas("reservation_id"),
-    asyncErrorBoundary(checkReservation),
+    asyncErrorBoundary(checkReservationFromBody),
     asyncErrorBoundary(tableExists),
     checkIfSeated,
     checkIfOccupied,
@@ -182,8 +197,8 @@ module.exports = {
     asyncErrorBoundary(seatReservation),
   ],
   finishReservation: [
-    asyncErrorBoundary(checkReservation),
     asyncErrorBoundary(tableExists),
+    asyncErrorBoundary(checkReservationFromTable),
     checkIfNotOccupied,
     asyncErrorBoundary(finishReservation),
   ],
