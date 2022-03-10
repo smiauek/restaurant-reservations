@@ -30,21 +30,22 @@ function ReservationsTable({ reservations }) {
                   {reservation.status}
                 </td>
                 <td>
-                  {reservation.status !== "seated" && (
-                    <a
-                      className="btn btn-success"
-                      href={`/reservations/${reservation.reservation_id}/seat`}
-                      role="button"
-                    >
-                      Seat
-                    </a>
-                  )}
+                  {reservation.status !== "seated" &&
+                    reservation.status !== "finished" && (
+                      <a
+                        className="btn btn-success"
+                        href={`/reservations/${reservation.reservation_id}/seat`}
+                        role="button"
+                      >
+                        Seat
+                      </a>
+                    )}
                 </td>
               </tr>
             ))
           ) : (
             <tr>
-              <td colSpan="6">No reservations for this date</td>
+              <td colSpan="6">No reservations found</td>
             </tr>
           )}
         </tbody>
