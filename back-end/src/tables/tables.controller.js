@@ -52,12 +52,27 @@ async function tableExists(req, res, next) {
   return next({ status: 404, message: `Table ${table_id} cannot be found.` });
 }
 
-async function checkReservation(req, res, next) {
+async function checkReservationFromBody(req, res, next) {
   const { reservation_id } = req.body.data;
 
   const reservation = await reservationsService.read(reservation_id);
 
   if (reservation) {
+    res.locals.reservation = reservation;
+    return next();
+  }
+  return next({
+    status: 404,
+    message: `Reservation ${reservation_id} cannot be found.`,
+  });
+}
+
+async function checkReservationFromTable(req, res, next) {
+  const { reservation_id } = res.locals.table;
+
+  const reservation = await reservationsService.read(reservation_id);
+
+  if (reservation !== null) {
     res.locals.reservation = reservation;
     return next();
   }
@@ -97,6 +112,17 @@ function checkIfNotOccupied(req, res, next) {
   return next();
 }
 
+function checkIfSeated(req, res, next) {
+  const { status } = res.locals.reservation;
+  if (status === "seated") {
+    return next({
+      status: 400,
+      message: "this reservation is already seated",
+    });
+  }
+  next();
+}
+
 async function list(req, res) {
   const data = await service.list();
   return res.json({ data });
@@ -108,7 +134,7 @@ async function create(req, res, next) {
   const newTable = {
     table_name,
     capacity,
-    reservation_id: reservation_id || null
+    reservation_id: reservation_id || null,
   };
 
   const data = await service.create(newTable);
@@ -122,8 +148,16 @@ async function seatReservation(req, res, next) {
     table_id: res.locals.table.table_id,
   };
 
-  const data = await service.update(updatedTable);
-  res.json({ data });
+  const tableData = await service.update(updatedTable);
+  res.json({ tableData });
+
+  const updatedReservation = {
+    ...res.locals.reservation,
+    status: "seated",
+  };
+
+  const reservationData = await reservationsService.update(updatedReservation);
+  res.json({ reservationData });
 }
 
 async function finishReservation(req, res, next) {
@@ -132,8 +166,16 @@ async function finishReservation(req, res, next) {
     reservation_id: null,
   };
 
-  const data = await service.update(updatedTable);
-  res.json({ data });
+  const tableData = await service.update(updatedTable);
+  res.json({ tableData });
+
+  const updatedReservation = {
+    ...res.locals.reservation,
+    status: "finished",
+  };
+
+  const reservationData = await reservationsService.update(updatedReservation);
+  res.json({ reservationData });
 }
 
 module.exports = {
@@ -147,14 +189,16 @@ module.exports = {
   ],
   seatReservation: [
     bodyDataHas("reservation_id"),
-    asyncErrorBoundary(checkReservation),
+    asyncErrorBoundary(checkReservationFromBody),
     asyncErrorBoundary(tableExists),
+    checkIfSeated,
     checkIfOccupied,
     checkCapacity,
     asyncErrorBoundary(seatReservation),
   ],
   finishReservation: [
     asyncErrorBoundary(tableExists),
+    asyncErrorBoundary(checkReservationFromTable),
     checkIfNotOccupied,
     asyncErrorBoundary(finishReservation),
   ],
