@@ -8,6 +8,7 @@ import NewTable from "../tables/NewTable";
 import NotFound from "./NotFound";
 import { today } from "../utils/date-time";
 import useQuery from "../utils/useQuery";
+import Search from "../search/Search";
 
 /**
  * Defines all the routes for the application.
@@ -25,6 +26,9 @@ function Routes() {
     <Switch>
       <Route exact={true} path="/">
         <Redirect to={"/dashboard"} />
+      </Route>
+      <Route path="/search">
+        <Search />
       </Route>
       <Route path="/tables/new">
         <NewTable />
