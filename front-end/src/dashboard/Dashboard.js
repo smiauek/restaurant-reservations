@@ -1,5 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { listReservations, listTables, finishReservation } from "../utils/api";
+import {
+  listReservations,
+  listTables,
+  finishReservation,
+  cancelReservation,
+} from "../utils/api";
 import ErrorAlert from "../layout/ErrorAlert";
 import ReservationsTable from "./ReservationsTable";
 import ButtonGroup from "./ButtonGroup";
@@ -43,6 +48,19 @@ function Dashboard({ date }) {
     return () => abortController.abort();
   };
 
+  const handleCancel = (reservation_id) => {
+    const abortController = new AbortController();
+    async function cancel() {
+      try {
+        await cancelReservation(reservation_id, abortController.signal);
+      } catch (error) {
+        setReservationsError(error);
+      }
+    }
+    cancel().then(loadDashboard);
+    return () => abortController.abort();
+  };
+
   return (
     <main>
       <h1>Dashboard</h1>
@@ -54,7 +72,10 @@ function Dashboard({ date }) {
             <h4 className="mb-0">Reservations for {date}</h4>
           </div>
           <ButtonGroup date={date} />
-          <ReservationsTable reservations={reservations} />
+          <ReservationsTable
+            reservations={reservations}
+            handleCancel={handleCancel}
+          />
         </div>
         <div className="col-4">
           <div className="d-md-flex mb-3">
