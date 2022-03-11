@@ -145,6 +145,7 @@ function checkStatus(req, res, next) {
   if (
     newStatus === "booked" ||
     newStatus === "seated" ||
+    newStatus === "cancelled" ||
     newStatus === "finished"
   ) {
     return next();
@@ -153,7 +154,7 @@ function checkStatus(req, res, next) {
   return next({
     status: 400,
     message:
-      'unknown status, status can only be "booked", "seated" or "finished"',
+      'unknown status, status can only be "booked", "seated", "cancelled" or "finished"',
   });
 }
 
@@ -200,6 +201,33 @@ async function create(req, res, next) {
 
   res.status(201).json({ data });
 }
+async function update(req, res, next) {
+  const {
+    data: {
+      first_name,
+      last_name,
+      mobile_number,
+      reservation_date,
+      reservation_time,
+      people,
+    } = {},
+  } = req.body;
+
+  const updatedReservation = {
+    first_name,
+    last_name,
+    mobile_number,
+    reservation_date,
+    reservation_time,
+    people,
+    status: res.locals.reservation.status,
+    reservation_id: res.locals.reservation.reservation_id,
+  };
+
+  const data = await service.update(updatedReservation);
+
+  res.json({ data });
+}
 
 async function changeStatus(req, res, next) {
   const { status } = req.body.data;
@@ -222,12 +250,25 @@ module.exports = {
     bodyDataHas("reservation_date"),
     bodyDataHas("reservation_time"),
     bodyDataHas("people"),
-
     peopleIsValidNumber,
     timeIsValidTime,
     dateIsValidDate,
     checkIfStatusBooked,
     asyncErrorBoundary(create),
+  ],
+  update: [
+    asyncErrorBoundary(reservationExists),
+    bodyDataHas("first_name"),
+    bodyDataHas("last_name"),
+    bodyDataHas("mobile_number"),
+    bodyDataHas("reservation_date"),
+    bodyDataHas("reservation_time"),
+    bodyDataHas("people"),
+    peopleIsValidNumber,
+    timeIsValidTime,
+    dateIsValidDate,
+    checkIfStatusBooked,
+    asyncErrorBoundary(update),
   ],
   changeStatus: [
     asyncErrorBoundary(reservationExists),
