@@ -5,7 +5,7 @@ function ReservationForm({ formData, handleChange }) {
     <>
       <form id="reservationForm">
         <div className="form-row">
-          <div className="col">
+          <div className="col-md">
             <label className="form-label" htmlFor="first_name">
               First Name
             </label>
@@ -20,7 +20,7 @@ function ReservationForm({ formData, handleChange }) {
               value={formData.first_name}
             />
           </div>
-          <div className="col">
+          <div className="col-md">
             <label className="form-label" htmlFor="last_name">
               Last Name
             </label>
@@ -35,7 +35,7 @@ function ReservationForm({ formData, handleChange }) {
               value={formData.last_name}
             />
           </div>
-          <div className="col">
+          <div className="col-md">
             <label className="form-label" htmlFor="mobile_number">
               Mobile Number
             </label>
@@ -53,7 +53,7 @@ function ReservationForm({ formData, handleChange }) {
           </div>
         </div>
         <div className="form-row mt-3 mb-3">
-          <div className="col">
+          <div className="col-sm">
             <label className="form-label" htmlFor="reservation_date">
               Date
             </label>
@@ -68,7 +68,7 @@ function ReservationForm({ formData, handleChange }) {
               value={formData.reservation_date}
             />
           </div>
-          <div className="col">
+          <div className="col-sm">
             <label className="form-label" htmlFor="reservation_time">
               Time
             </label>
@@ -82,7 +82,7 @@ function ReservationForm({ formData, handleChange }) {
               value={formData.reservation_time}
             />
           </div>
-          <div className="col">
+          <div className="col-sm">
             <label className="form-label" htmlFor="people">
               Party Size
             </label>
