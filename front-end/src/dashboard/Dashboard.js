@@ -66,9 +66,10 @@ function Dashboard({ date }) {
       <h1>Dashboard</h1>
       <ErrorAlert error={reservationsError} />
       <ErrorAlert error={tablesError} />
+
       <div className="row">
-        <div className="col-8">
-          <div className="d-md-flex mb-3">
+        <div className="col-lg-8">
+          <div className=" mb-3">
             <h4 className="mb-0">Reservations for {date}</h4>
           </div>
           <ButtonGroup date={date} />
@@ -77,8 +78,8 @@ function Dashboard({ date }) {
             handleCancel={handleCancel}
           />
         </div>
-        <div className="col-4">
-          <div className="d-md-flex mb-3">
+        <div className="col-lg-4">
+          <div className=" mb-3">
             <h4 className="mb-0">Tables</h4>
           </div>
           <TablesTable tables={tables} handleFinish={handleFinish} />
