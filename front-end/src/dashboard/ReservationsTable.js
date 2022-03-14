@@ -1,12 +1,15 @@
 import React from "react";
 
 function ReservationsTable({ reservations, handleCancel }) {
+  const path = window.location.pathname;
+
   return (
     <>
       <table className="table">
         <thead className="thead-light">
           <tr>
             <th scope="col">Id</th>
+            {path.includes("search") && <th scope="col">Date</th>}
             <th scope="col">Time</th>
             <th scope="col">First</th>
             <th scope="col">Last</th>
@@ -21,6 +24,9 @@ function ReservationsTable({ reservations, handleCancel }) {
             reservations.map((reservation, index) => (
               <tr key={index}>
                 <th scope="row">{reservation.reservation_id}</th>
+                {path.includes("search") && (
+                  <td>{reservation.reservation_date}</td>
+                )}
                 <td>{reservation.reservation_time}</td>
                 <td>{reservation.first_name}</td>
                 <td>{reservation.last_name}</td>
