@@ -15,7 +15,7 @@ function Search() {
   const [displayResults, setDisplayResults] = useState(false);
 
   const handleChange = ({ target }) => {
-    let value = Number(target.value);
+    let value = target.value;
 
     setFormData({
       ...formData,
