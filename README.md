@@ -33,7 +33,7 @@ Have a look at the following examples:
 - `npm run test:3:backend` runs only the backend tests for user story 3.
 - `npm run test:3:frontend` runs only the frontend tests for user story 3.  
 
-To run all teasts at once, use the following commands:  
+To run all tests at once, use the following commands:  
 
 - `npm test` runs _all_ tests.
 - `npm run test:backend` runs _all_ backend tests.
