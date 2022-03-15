@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import ErrorAlert from "../layout/ErrorAlert";
-import { listReservations } from "../utils/api";
+import { listReservations, cancelReservation } from "../utils/api";
 import SearchForm from "./SearchForm";
 import ReservationsTable from "../dashboard/ReservationsTable";
 
@@ -23,23 +23,36 @@ function Search() {
     });
   };
 
-  const handleFind = (event) => {
-    event.preventDefault();
+  async function findReservations() {
     const abortController = new AbortController();
-    async function findReservations() {
+    try {
+      const { mobile_number } = formData;
+      const data = await listReservations(
+        { mobile_number },
+        abortController.signal
+      );
+      setFoundReservations([...data]);
+    } catch (error) {
+      setFoundReservationsError(error);
+    }
+    return () => abortController.abort();
+  }
+
+  const handleFind = () => {
+    findReservations();
+    setDisplayResults(true);
+  };
+
+  const handleCancel = (reservation_id) => {
+    const abortController = new AbortController();
+    async function cancel() {
       try {
-        const { mobile_number } = formData;
-        const data = await listReservations(
-          { mobile_number },
-          abortController.signal
-        );
-        setFoundReservations([...data]);
+        await cancelReservation(reservation_id, abortController.signal);
       } catch (error) {
         setFoundReservationsError(error);
       }
     }
-    findReservations();
-    setDisplayResults(true);
+    cancel().then(handleFind);
     return () => abortController.abort();
   };
 
@@ -67,7 +80,10 @@ function Search() {
       )}
       <ErrorAlert error={foundReservationsError} />
       {displayResults ? (
-        <ReservationsTable reservations={foundReservations} />
+        <ReservationsTable
+          reservations={foundReservations}
+          handleCancel={handleCancel}
+        />
       ) : (
         <div className="row">
           <div className="col">
