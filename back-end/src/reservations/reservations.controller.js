@@ -84,7 +84,7 @@ function timeIsValidTime(req, res, next) {
     if (reservation_time <= currentTime) {
       return next({
         status: 400,
-        message: `reservation_time must be in the future, it now is ${currentTime}`,
+        message: `reservation_time must be in the future, current time is ${currentTime}`,
       });
     }
   }
@@ -123,7 +123,8 @@ function checkIfStatusBooked(req, res, next) {
     if (status !== "booked") {
       return next({
         status: 400,
-        message: 'new reservation can not have status "seated" or "finished"',
+        message:
+          'new reservation can not have status "seated", "finished" or "cancelled"',
       });
     }
   }
@@ -201,6 +202,7 @@ async function create(req, res, next) {
 
   res.status(201).json({ data });
 }
+
 async function update(req, res, next) {
   const {
     data: {
