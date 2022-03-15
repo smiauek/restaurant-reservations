@@ -40,7 +40,7 @@ function ReservationsTable({ reservations, handleCancel }) {
                     reservation.status !== "finished" &&
                     reservation.status !== "cancelled" && (
                       <a
-                      style={{width:70}}
+                        style={{ width: 70 }}
                         className="btn btn-success"
                         href={`/reservations/${reservation.reservation_id}/seat`}
                         role="button"
@@ -50,18 +50,18 @@ function ReservationsTable({ reservations, handleCancel }) {
                     )}
                   {reservation.status === "booked" && (
                     <a
-                    style={{width:70}}
+                      style={{ width: 70 }}
                       className="btn btn-primary"
                       href={`/reservations/${reservation.reservation_id}/edit`}
                       role="button"
                     >
-                      Edit 
+                      Edit
                     </a>
                   )}
                   {reservation.status === "booked" && (
                     <button
                       type="button"
-                      style={{width:70}}
+                      style={{ width: 70 }}
                       className="btn btn-danger"
                       data-reservation-id-cancel={reservation.reservation_id}
                       onClick={() => {
