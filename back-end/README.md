@@ -1,5 +1,9 @@
-# Capstone: Restaurant Reservation System Backend
+# Restaurant Reservation System Backend
 
-This starter code for the backend of the capstone project in the Thinkful curriculum.
-
-See [../README.md](../README.md) for detailed instructions.
+API built following RESTful design principles with PostgreSQL database for Restauranr Reservation System.  
+  
+Deployed API can be found [here](https://res-res-backend.herokuapp.com/)  
+  
+## Supported Routes:
+- `GET /reservations`  
+This route will respond with a list of reservations for tadays date that have status "booked" or "seated".
